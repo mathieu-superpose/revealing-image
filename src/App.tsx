@@ -9,36 +9,64 @@ function App() {
         paddingBottom: "100px",
       }}
     >
-      <h1 style={{ padding: "40px", marginBottom: "100px" }}>
-        Revealing Image
-      </h1>
-
-      <ul
+      <section
         style={{
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          listStyle: "none",
-          gap: "200px",
+          alignItems: "center",
         }}
       >
-        <li style={{ alignSelf: "start" }}>
-          <RevealingImage height={600} width={800} path="img/bmx.jpg" />
-        </li>
-        <li style={{ alignSelf: "end" }}>
-          <RevealingImage height={600} width={800} path="img/love.jpg" />
-        </li>
+        <h1
+          style={{
+            width: "min(100%, 2000px)",
+            padding: "40px",
+            marginBottom: "100px",
+          }}
+        >
+          Revealing Image
+        </h1>
+      </section>
 
-        <li style={{ alignSelf: "start" }}>
-          <RevealingImage height={600} width={800} path="img/river.jpg" />
-        </li>
-        <li style={{ alignSelf: "end" }}>
-          <RevealingImage height={600} width={800} path="img/running.jpg" />
-        </li>
-        <li style={{ alignSelf: "start" }}>
-          <RevealingImage height={600} width={800} path="img/subway.jpg" />
-        </li>
-      </ul>
+      <section
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ul
+          style={{
+            width: "min(100%, 2000px)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            listStyle: "none",
+            gap: "200px",
+          }}
+        >
+          <li style={{ alignSelf: "start", width: "min(50%, 800px)" }}>
+            <RevealingImage path="img/bmx.jpg" />
+          </li>
+
+          <li style={{ alignSelf: "end", width: "min(50%, 800px)" }}>
+            <RevealingImage path="img/love.jpg" />
+          </li>
+
+          <li style={{ alignSelf: "start", width: "min(50%, 800px)" }}>
+            <RevealingImage path="img/river.jpg" />
+          </li>
+
+          <li style={{ alignSelf: "end", width: "min(50%, 800px)" }}>
+            <RevealingImage path="img/running.jpg" />
+          </li>
+
+          <li style={{ alignSelf: "start", width: "min(50%, 800px)" }}>
+            <RevealingImage path="img/subway.jpg" />
+          </li>
+        </ul>
+      </section>
     </div>
   )
 }

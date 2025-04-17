@@ -40,7 +40,6 @@ function PixelatedImage({ path }: { path: string }) {
   const material = useMemo(() => {
     const mat = new PixelatedShaderMaterial()
     mat.uniforms.uTexture = new THREE.Uniform(texture)
-    // mat.uniforms.uPixelSize.value = 0.1 // Adjust this value to control pixelation
     return mat
   }, [texture])
 
@@ -62,16 +61,14 @@ function PixelatedImage({ path }: { path: string }) {
 }
 
 function RevealingImage({
-  height = null,
   width = null,
   path,
 }: {
-  height: number | null
-  width: number | null
+  width?: string | null
   path: string
 }) {
   return (
-    <ResizableCanvas height={height} width={width}>
+    <ResizableCanvas width={width}>
       <PixelatedImage path={path} />
     </ResizableCanvas>
   )
