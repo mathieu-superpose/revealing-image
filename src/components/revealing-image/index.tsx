@@ -9,9 +9,20 @@ import {
 } from "@react-three/fiber"
 import { shaderMaterial } from "@react-three/drei"
 
+/*
+  // SETTINGS
+*/
+const STEP_TIME = 0.3
+const MAX_STEP = 12
+
+/*
+  // INITITALIZE SHADER
+*/
 const PixelatedShaderMaterial = shaderMaterial(
   {
-    uPixelSize: 1.0,
+    uElapsedTime: 0.0,
+    uStepTime: STEP_TIME,
+    uMaxStep: MAX_STEP,
   },
   `
     varying vec2 vUv;
@@ -22,20 +33,23 @@ const PixelatedShaderMaterial = shaderMaterial(
   `,
   `
     uniform sampler2D uTexture;
-    uniform float uPixelSize;
+    uniform float uElapsedTime;
+    uniform float uStepTime;
+    uniform float uMaxStep;
+
     varying vec2 vUv;
 
     void main() {
-      vec2 uv = floor(vUv / uPixelSize) * uPixelSize;
+      float step = min(floor(uElapsedTime / uStepTime), uMaxStep);
+      float pixelSize = 1.0 / pow(2.0, step);
+
+      vec2 uv = floor(vUv / pixelSize) * pixelSize;
       gl_FragColor = texture2D(uTexture, uv);
     }
   `
 )
 
 extend({ PixelatedShaderMaterial })
-
-const STEP_TIME = 0.3
-const MAX_STEP = 12
 
 function PixelatedImage({
   path,
@@ -46,7 +60,6 @@ function PixelatedImage({
 }) {
   const { viewport } = useThree()
   const texture = useLoader(THREE.TextureLoader, path)
-  const [startTime, setStartTime] = useState<number | null>(null)
 
   const material = useMemo(() => {
     const mat = new PixelatedShaderMaterial()
@@ -54,28 +67,12 @@ function PixelatedImage({
     return mat
   }, [texture])
 
-  useFrame((state) => {
-    const elapsed = state.clock.getElapsedTime()
-
+  useFrame((_state, delta) => {
     if (!isVisible) {
-      // // ALLOW RESET
-      // if (startTime !== null) {
-      //   setStartTime(null)
-      // }
       return
     }
-
-    if (startTime === null) {
-      setStartTime(elapsed)
-      return
-    }
-
-    const time = elapsed - startTime
-    const step = Math.floor(time / STEP_TIME)
-    if (step < MAX_STEP) {
-      const pixelSize = 1 / Math.pow(2, step)
-      material.uniforms.uPixelSize.value = pixelSize
-    }
+    
+    material.uniforms.uElapsedTime.value += delta
   })
 
   return (
