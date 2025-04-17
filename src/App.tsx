@@ -15,12 +15,15 @@ function App() {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
+          fontSize: "1rem",
+          margin: "0 auto",
         }}
       >
         <h1
           style={{
             width: "min(100%, 2000px)",
             padding: "40px",
+            fontSize: "2rem",
             marginBottom: "100px",
           }}
         >

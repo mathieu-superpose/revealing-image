@@ -12,8 +12,8 @@ import { shaderMaterial } from "@react-three/drei"
 /*
   // SETTINGS
 */
-const STEP_TIME = 0.3
-const MAX_STEP = 12
+const STEP_TIME = 0.14
+const MAX_STEP = 10
 
 /*
   // INITITALIZE SHADER
@@ -40,11 +40,29 @@ const PixelatedShaderMaterial = shaderMaterial(
     varying vec2 vUv;
 
     void main() {
+      float progress = min(1.0, (uElapsedTime / uStepTime) / uMaxStep);
+
+      // Pixelation effect
+      // float step = max(0.0, min(floor(uElapsedTime / uStepTime) - uMaxStep / 2.0, uMaxStep / 2.0));
       float step = min(floor(uElapsedTime / uStepTime), uMaxStep);
       float pixelSize = 1.0 / pow(2.0, step);
 
       vec2 uv = floor(vUv / pixelSize) * pixelSize;
-      gl_FragColor = texture2D(uTexture, uv);
+      vec3 color = texture2D(uTexture, uv).rgb;
+
+
+      // horizontal curtain effect
+      vec3 darkColor = vec3(0.1, 0.1, 0.1);
+      vec3 blueColor = vec3(0.1, 0.1, 0.7);
+
+      float alpha = progress * 3.0 - vUv.x;
+
+      if (alpha < 0.0) {
+        gl_FragColor = vec4(darkColor, 1.0);
+      } else {
+        color = smoothstep(0.0, 1.0, alpha) * color + (1.0 - smoothstep(0.0, 1.0, alpha)) * blueColor;
+        gl_FragColor = vec4(color, 1.0);
+      }
     }
   `
 )
@@ -71,7 +89,7 @@ function PixelatedImage({
     if (!isVisible) {
       return
     }
-    
+
     material.uniforms.uElapsedTime.value += delta
   })
 
@@ -116,7 +134,10 @@ function RevealingImage({
       ref={containerRef}
       style={{ width: width || "100%", aspectRatio: "4 / 3" }}
     >
-      <Canvas>
+      <Canvas
+        resize={{ scroll: true, debounce: { scroll: 50, resize: 50 } }}
+        dpr={[1, 2]}
+      >
         <PixelatedImage path={path} isVisible={isVisible} />
       </Canvas>
     </div>
